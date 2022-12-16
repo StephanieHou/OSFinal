@@ -123,7 +123,6 @@ int main(int argc, char *argv[])
     if (object.fail())
     {
         cout << "Issue reading file " << file_name << endl;
-        ;
     }
     else
     {
