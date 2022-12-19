@@ -150,6 +150,11 @@ int main(int argc, char *argv[])
             final_xor ^= multithreaded_xor(no_of_elements, td);
             block_count++;
             size += object.gcount();
+
+            if(now() - start > 15){
+                cout<<"Hit 15 Seconds"<<endl;
+                break;
+            }
         }
 
         if (object.gcount() < block_size && object.gcount() > 0)
