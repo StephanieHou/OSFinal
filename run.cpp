@@ -48,7 +48,7 @@ void print_performance(double size, double start, double end, unsigned int block
     cout << "Size of the file read: " << (size / (1024 * 1024)) << " MB" << endl
          << endl;
     cout << "Time taken: " << (end - start) << " seconds" << endl;
-    cout << "Rate of file read: " << get_rate(size, start, end) << " MiB/sec" << endl
+    cout << "Rate of file read: " << get_rate(size, start, end) << " MiB/sec | " << get_rate(size, start, end) * pow(2.0, 20.0) << " B/sec" << endl
          << endl;
     printf("Xor value: %08x", final_xor);
     cout << endl
@@ -60,7 +60,16 @@ void print_performance_w(double size, double start, double end)
     cout << "======================= Metrics ======================" << endl;
     cout << "Size of the file written: " << (size / (1024 * 1024)) << " MB" << endl;
     cout << "Time taken: " << (end - start) << " seconds" << endl;
-    cout << "Rate of file written: " << get_rate(size, start, end) << " MiB/sec" << endl;
+    cout << "Rate of file written: " << get_rate(size, start, end) << " MiB/sec | " << get_rate(size, start, end) * pow(2.0, 20.0) << " B/sec" << endl;
+    cout << "======================================================" << endl;
+}
+
+void print_performance_s(double size, double start, double end)
+{
+    cout << "======================= Metrics ======================" << endl;
+    cout << "Size of the file seeked: " << (size / (1024 * 1024)) << " MB" << endl;
+    cout << "Time taken: " << (end - start) << " seconds" << endl;
+    cout << "Rate of file seeked: " << get_rate(size, start, end) << " MiB/sec | " << get_rate(size, start, end) * pow(2.0, 20.0) << " B/sec" << endl;
     cout << "======================================================" << endl;
 }
 
@@ -110,7 +119,7 @@ unsigned int multithreaded_xor(unsigned int no_of_elements, struct thread_data t
 int main(int argc, char *argv[])
 {
     unsigned int block_size = 0, block_count = 0, size = 0;
-    bool read_mode = false, write_mode = false;
+    bool read_mode = false, write_mode = false, seek_mode = false;
     double start, end;
     string file_name = "";
     struct thread_data td[num_threads];
@@ -126,6 +135,7 @@ int main(int argc, char *argv[])
         file_name = argv[1];
         read_mode = ("-r" == s || "-R" == s);
         write_mode = ("-w" == s || "-W" == s);
+        seek_mode = ("-s" == s || "-S" == s);
         block_size = (unsigned int)stoi(argv[3]);
         block_count = (unsigned int)stoi(argv[4]);
     }
@@ -201,9 +211,41 @@ int main(int argc, char *argv[])
 
         print_performance_w(size, start, end);
     }
+    else if (seek_mode)
+    {
+        unsigned int no_of_blocks_elapsed = 0, final_xor = 0, size_of_buf;
+        unsigned int no_of_elements = (unsigned int)(block_size / sizeof(int) + block_size % sizeof(int));
+        size_of_buf = no_of_elements * sizeof(int);
+        buf = (unsigned int *)malloc(size_of_buf);
+
+        start = now();
+
+        ifstream object;
+        object.open(file_name, ios::binary);
+
+        if (object.fail())
+        {
+            cout << "Issue reading file " << file_name;
+        }
+        else
+        {
+            cout << "Seeking " << file_name << " in chunks of " << block_size << " ..... " << endl;
+
+            object.seekg(100 * size_of_buf);
+            object.read((char *)buf, size_of_buf);
+
+            object.seekg(0, object.end);
+
+            object.close();
+
+            end = now();
+
+            print_performance_s(size, start, end);
+        }
+    }
     else
     {
-        perror("Please specify -r or -w in arguments.");
+        perror("Please specify -r, -w, or -s in arguments.");
         return 0;
     }
 

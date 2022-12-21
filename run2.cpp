@@ -162,9 +162,11 @@ int main(int argc, char *argv[])
 
         if(end - start < 5){
             cout<<"NOT REASONABLE: Less than 5 seconds"<<endl;
+            print_performance(size, start, end, block_count, final_xor);
         }
         else if(end - start > 15){
             cout<<"NOT REASONABLE: More than 15 seconds"<<endl;
+            print_performance(size, start, end, block_count, final_xor);
         }
         else{
             print_performance(size, start, end, block_count, final_xor);
