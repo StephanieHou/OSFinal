@@ -66,7 +66,6 @@ void *xorbuf(void *arg)
 
     for (int i = tid; i < size; i += num_threads)
     {
-        // if(buf[i]!=0) cout<<buf[i]<<" thread "<<tid<<" "<<i<<endl;
         result ^= buf[i];
     }
 
@@ -122,8 +121,6 @@ int main(int argc, char *argv[])
     unsigned int no_of_elements = (unsigned int)(block_size / sizeof(int) + block_size % sizeof(int));
     unsigned int size_of_buf = no_of_elements * sizeof(int);
     buf = (unsigned int *)malloc(size_of_buf);
-    // cout<<no_of_elements<<" ----- "<<size<<" ----- "<<sizeof(buf)<<"-----"<<(no_of_elements * sizeof( unsigned int))<<endl;
-    // memset(buf,0,no_of_elements*sizeof(int));
 
     start = now();
 
@@ -158,8 +155,6 @@ int main(int argc, char *argv[])
             block_count++;
             size += object.gcount();
         }
-
-        // cout<<"----"<<object.gcount()<<endl;
 
         object.close();
 
