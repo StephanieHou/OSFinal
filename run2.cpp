@@ -8,7 +8,7 @@
 using namespace std;
 
 /* GeneraL Variables */
-int num_threads = 8;
+int num_threads = 4;
 unsigned int *buf;
 char *buffer;
 
@@ -150,11 +150,6 @@ int main(int argc, char *argv[])
             final_xor ^= multithreaded_xor(no_of_elements, td);
             block_count++;
             size += object.gcount();
-
-            if(now() - start > 15){
-                cout<<"Hit 15 Seconds"<<endl;
-                break;
-            }
         }
 
         if (object.gcount() < block_size && object.gcount() > 0)
@@ -170,7 +165,15 @@ int main(int argc, char *argv[])
 
         end = now();
 
-        print_performance(size, start, end, block_count, final_xor);
+        if(end - start < 5){
+            cout<<"NOT REASONABLE: Less than 5 seconds"<<endl;
+        }
+        else if(end - start > 15){
+            cout<<"NOT REASONABLE: More than 15 seconds"<<endl;
+        }
+        else{
+            print_performance(size, start, end, block_count, final_xor);
+        }
     }
 
     return 0;

@@ -8,9 +8,8 @@
 using namespace std;
 
 /* GeneraL Variables */
-int num_threads = 8;
+int num_threads = 4;
 unsigned int *buf;
-char *buffer;
 
 /* Threads */
 pthread_t *threads;
@@ -92,10 +91,14 @@ unsigned int multithreaded_xor(unsigned int no_of_elements, struct thread_data t
 int main(int argc, char *argv[])
 {
     unsigned int block_size = 16777216, final_xor = 0;
-    bool read_mode = false, write_mode = false;
     double start, end;
     string file_name = "";
     struct thread_data td[num_threads];
+
+    for (int i = 0; i < num_threads; i++)
+    {
+        td[i].xor_result = 0;
+    }
 
     if (argc != 2)
     {
@@ -143,7 +146,10 @@ int main(int argc, char *argv[])
             final_xor ^= multithreaded_xor(object.gcount() / sizeof(unsigned int), td);
         }
 
-        // cout<<"----"<<object.gcount()<<endl;
+        for (int i = 0; i < num_threads; i++)
+        {
+            final_xor = final_xor ^ td[i].xor_result;
+        }
 
         object.close();
 

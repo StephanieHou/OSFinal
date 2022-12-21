@@ -8,7 +8,7 @@
 using namespace std;
 
 /* GeneraL Variables */
-int num_threads = 8;
+int num_threads = 4;
 unsigned int *buf;
 char *buffer;
 
